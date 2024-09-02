@@ -1,0 +1,23 @@
+package io.iamkrishna73.notes.controller.dto;
+
+import io.iamkrishna73.notes.entity.Role;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Setter
+@Getter
+public class LoginResponse {
+    private String jwtToken;
+    private String username;
+    private List<Role> roles;
+
+    public LoginResponse(String username, List<String> roles, String jwtToken) {
+        this.username = username;
+        this.roles = roles;
+        this.jwtToken = jwtToken;
+    }
+
+
+}
