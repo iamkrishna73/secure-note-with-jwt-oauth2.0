@@ -6,6 +6,7 @@ import io.iamkrishna73.notes.service.IAuthService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -51,5 +52,9 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-
+    @GetMapping("/username")
+    public ResponseEntity<String> currentUsername(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = authService.getCurrentUsername(userDetails);
+        return new ResponseEntity<>(username, HttpStatus.FOUND);
+    }
 }

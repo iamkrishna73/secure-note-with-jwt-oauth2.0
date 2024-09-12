@@ -134,6 +134,7 @@ public class AuthService implements IAuthService {
 
         }
         user.role(role);
+        log.info(LoggingConstant.END_METHOD_LOG, methodName);
         userRepository.save(user.build());
     }
 
@@ -166,5 +167,10 @@ public class AuthService implements IAuthService {
         log.info(LoggingConstant.END_METHOD_LOG, methodName);
 
         return response;
+    }
+
+    @Override
+    public String getCurrentUsername(UserDetails userDetails) {
+        return (userDetails != null) ? userDetails.getUsername() : "user name is not found!";
     }
 }
