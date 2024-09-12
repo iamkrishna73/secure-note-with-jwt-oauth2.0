@@ -11,7 +11,7 @@ public enum ErrorMessages {
     PASSWORD_NOT_MATCHED("E401", "Password not matched!"),
 
     INVALID_ACCESS_TOKEN("T401", "Invalid access token!"),
-
+    BAD_CREDENTIALS("B404", "Bad credentials"),
     ROLE_NOT_FOUND("R404", "Role is not found");
 
     private final String errorCode;

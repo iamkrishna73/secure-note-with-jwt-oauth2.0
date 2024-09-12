@@ -1,6 +1,6 @@
 package io.iamkrishna73.notes.security.jwt;
 
-import io.iamkrishna73.notes.security.config.service.UserDetailsServiceImpl;
+import io.iamkrishna73.notes.security.service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

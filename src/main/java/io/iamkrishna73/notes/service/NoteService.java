@@ -1,7 +1,7 @@
 package io.iamkrishna73.notes.service;
 
 import io.iamkrishna73.notes.entity.Note;
-import io.iamkrishna73.notes.repository.NoteRepository;
+import io.iamkrishna73.notes.repositories.NoteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

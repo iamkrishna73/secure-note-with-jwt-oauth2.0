@@ -4,7 +4,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import org.hibernate.annotations.Comment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,15 +12,14 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${spring.app.jwtSecretKey}")
-    private String jwtSecretKey;
+    @Value("${spring.app.jwtSecret}")
+    private String jwtSecret;
 
     @Value("${spring.app.jwtExpirationMs}")
     private String jwtExpirationMs;
@@ -69,8 +67,9 @@ public class JwtUtils {
     }
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecretKey));
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
     }
+
 }
 
 

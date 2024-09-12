@@ -1,7 +1,7 @@
-package io.iamkrishna73.notes.security.config.service;
+package io.iamkrishna73.notes.security.service;
 
 import io.iamkrishna73.notes.entity.User;
-import io.iamkrishna73.notes.repository.UserRepository;
+import io.iamkrishna73.notes.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -3,6 +3,7 @@ package io.iamkrishna73.notes.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -34,10 +35,11 @@ public class User {
 
     @NotBlank
     @Size(max= 50)
+    @Email
     @Column(name = "email")
     private String email;
 
-    @Size(max= 20)
+    @Size(max= 120)
     @Column(name = "password")
     @JsonIgnore
     private String password;

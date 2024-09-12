@@ -14,8 +14,8 @@ import io.iamkrishna73.notes.exception.BadCredentialsException;
 import io.iamkrishna73.notes.exception.RoleNotFoundException;
 import io.iamkrishna73.notes.exception.UserAlreadyExistsException;
 import io.iamkrishna73.notes.exception.UserNotFoundException;
-import io.iamkrishna73.notes.repository.RoleRepository;
-import io.iamkrishna73.notes.repository.UserRepository;
+import io.iamkrishna73.notes.repositories.RoleRepository;
+import io.iamkrishna73.notes.repositories.UserRepository;
 import io.iamkrishna73.notes.security.jwt.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,27 +52,32 @@ public class AuthService implements IAuthService {
     @Override
     public LoginResponse loginUser(LoginRequest loginRequest) {
         var methodName = "AuthService:loginUser";
-        log.info(LoggingConstant.START_METHOD_LOG, methodName, loginRequest);
+        log.info(LoggingConstant.START_METHOD_LOG, methodName, loginRequest.getUsername());
 
         Authentication authentication;
         try {
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         } catch (AuthenticationException exception) {
+                    log.error(LoggingConstant.ERROR_METHOD_LOG, methodName, loginRequest.getPassword() + " bad credentials");
             throw new BadCredentialsException(
-                    ErrorMessages.PASSWORD_NOT_MATCHED.getErrorMessage(),
-                    ErrorMessages.PASSWORD_NOT_MATCHED.getErrorCode()
-            );
+                    ErrorMessages.BAD_CREDENTIALS.getErrorMessage(), ErrorMessages.BAD_CREDENTIALS.getErrorCode());
 
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        UserDetails userDetails = (UserDetails) authentication.getAuthorities();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
         String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
 
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+        // Collect roles from the UserDetails
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
 
-        LoginResponse response = new LoginResponse(userDetails.getUsername(), roles, jwtToken);
+        // Prepare the response body, now including the JWT token directly in the body
+        LoginResponse response = new LoginResponse(userDetails.getUsername(),
+                roles, jwtToken);
         log.info(LoggingConstant.END_METHOD_LOG, methodName);
         return response;
 
@@ -85,22 +90,14 @@ public class AuthService implements IAuthService {
 
         if (userRepository.existsByUserName(signupRequest.getUsername())) {
             log.error(LoggingConstant.ERROR_METHOD_LOG, methodName, signupRequest.getUsername() + "already exists");
-            throw new UserAlreadyExistsException(
-                    ErrorMessages.USER_ALREADY_EXISTS.getErrorMessage(),
-                    ErrorMessages.USER_ALREADY_EXISTS.getErrorCode());
+            throw new UserAlreadyExistsException(ErrorMessages.USER_ALREADY_EXISTS.getErrorMessage(), ErrorMessages.USER_ALREADY_EXISTS.getErrorCode());
         }
 
         if (userRepository.existsByEmail(signupRequest.getEmail())) {
             log.error(LoggingConstant.ERROR_METHOD_LOG, methodName, signupRequest.getEmail() + "already exists");
-            throw new UserAlreadyExistsException(
-                    ErrorMessages.USER_ALREADY_EXISTS.getErrorMessage(),
-                    ErrorMessages.USER_ALREADY_EXISTS.getErrorCode()
-            );
+            throw new UserAlreadyExistsException(ErrorMessages.USER_ALREADY_EXISTS.getErrorMessage(), ErrorMessages.USER_ALREADY_EXISTS.getErrorCode());
         }
-        var user = User.builder()
-                .userName(signupRequest.getUsername())
-                .email(signupRequest.getEmail())
-                .password(passwordEncoder.encode(signupRequest.getPassword()));
+        var user = User.builder().userName(signupRequest.getUsername()).email(signupRequest.getEmail()).password(passwordEncoder.encode(signupRequest.getPassword()));
 
 
         Set<String> initialRole = signupRequest.getRoles();
@@ -123,14 +120,7 @@ public class AuthService implements IAuthService {
                     throw new RoleNotFoundException(ErrorMessages.ROLE_NOT_FOUND.getErrorMessage(), ErrorMessages.USER_NOT_FOUND.getErrorCode());
                 });
             }
-            user.accountNonLocked(true)
-                    .accountNonLocked(true)
-                    .credentialsNonExpired(true)
-                    .enabled(true)
-                    .credentialsExpiryDate(LocalDate.now().plusYears(1))
-                    .accountExpiryDate(LocalDate.now().plusYears(1))
-                    .isTwoFactorEnabled(false)
-                    .signUpMethod("email").build();
+            user.accountNonLocked(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).credentialsExpiryDate(LocalDate.now().plusYears(1)).accountExpiryDate(LocalDate.now().plusYears(1)).isTwoFactorEnabled(false).signUpMethod("email").build();
 
         }
         user.role(role);
@@ -145,25 +135,12 @@ public class AuthService implements IAuthService {
 
         User user = userRepository.findByUserName(userDetails.getUsername()).orElseThrow(() -> {
             log.error(LoggingConstant.ERROR_METHOD_LOG, methodName, userDetails.getUsername() + "user not found");
-            throw new UserNotFoundException(ErrorMessages.ROLE_NOT_FOUND.getErrorMessage(),
-                    ErrorMessages.USER_NOT_FOUND.getErrorCode());
+            throw new UserNotFoundException(ErrorMessages.ROLE_NOT_FOUND.getErrorMessage(), ErrorMessages.USER_NOT_FOUND.getErrorCode());
         });
 
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
-        UserInfoResponse response = new UserInfoResponse(
-                user.getUserId(),
-                user.getUserName(),
-                user.getEmail(),
-                user.isAccountNonLocked(),
-                user.isAccountNonExpired(),
-                user.isCredentialsNonExpired(),
-                user.isEnabled(),
-                user.getCredentialsExpiryDate(),
-                user.getAccountExpiryDate(),
-                user.isTwoFactorEnabled(),
-                roles
-        );
+        UserInfoResponse response = new UserInfoResponse(user.getUserId(), user.getUserName(), user.getEmail(), user.isAccountNonLocked(), user.isAccountNonExpired(), user.isCredentialsNonExpired(), user.isEnabled(), user.getCredentialsExpiryDate(), user.getAccountExpiryDate(), user.isTwoFactorEnabled(), roles);
         log.info(LoggingConstant.END_METHOD_LOG, methodName);
 
         return response;

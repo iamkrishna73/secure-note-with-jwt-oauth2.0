@@ -1,4 +1,4 @@
-package io.iamkrishna73.notes.security.config.service;
+package io.iamkrishna73.notes.security.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.iamkrishna73.notes.entity.User;
@@ -38,7 +38,7 @@ public class UserDetailsImpl implements UserDetails {
     public static UserDetailsImpl build(User user) {
         GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getRoleName().name());
         return new UserDetailsImpl(user.getUserId(),
-                user.getUserName(), user.getEmail(), user.getPassword(), user.isTwoFactorEnable(), List.of(authority));
+                user.getUserName(), user.getEmail(), user.getPassword(), user.isTwoFactorEnabled(), List.of(authority));
     }
 
     @Override
@@ -90,9 +90,12 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         UserDetailsImpl user = (UserDetailsImpl) o;
         return Objects.equals(id, user.id);
     }
+
 }

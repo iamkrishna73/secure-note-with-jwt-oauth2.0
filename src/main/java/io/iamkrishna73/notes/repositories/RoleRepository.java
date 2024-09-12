@@ -1,4 +1,4 @@
-package io.iamkrishna73.notes.repository;
+package io.iamkrishna73.notes.repositories;
 
 import io.iamkrishna73.notes.entity.AppRole;
 import io.iamkrishna73.notes.entity.Role;

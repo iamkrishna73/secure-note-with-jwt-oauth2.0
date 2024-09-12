@@ -1,10 +1,11 @@
 package io.iamkrishna73.notes.service;
 
+import io.iamkrishna73.notes.controller.dto.UserDTO;
 import io.iamkrishna73.notes.entity.AppRole;
 import io.iamkrishna73.notes.entity.Role;
 import io.iamkrishna73.notes.entity.User;
-import io.iamkrishna73.notes.repository.RoleRepository;
-import io.iamkrishna73.notes.repository.UserRepository;
+import io.iamkrishna73.notes.repositories.RoleRepository;
+import io.iamkrishna73.notes.repositories.UserRepository;
 import io.iamkrishna73.notes.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public User getUserById(Long userId) {
+    public UserDTO getUserById(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
         return UserMapper.convertToUserDto(user);
     }
