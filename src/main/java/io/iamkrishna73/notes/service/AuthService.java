@@ -68,11 +68,13 @@ public class AuthService implements IAuthService {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
+        log.info(LoggingConstant.END_METHOD_LOG, "before jwt token " + userDetails.getUsername());
         String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+        log.info(LoggingConstant.END_METHOD_LOG, "after jwt token " + jwtToken);
 
         // Collect roles from the UserDetails
         List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         // Prepare the response body, now including the JWT token directly in the body
@@ -129,7 +131,7 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public UserInfoResponse getUserDeatils(UserDetails userDetails) {
+    public UserInfoResponse getUserDetails(UserDetails userDetails) {
         var methodName = "AuthService:getUserDetails";
         log.info(LoggingConstant.START_METHOD_LOG, methodName, userDetails.getUsername());
 
@@ -148,6 +150,10 @@ public class AuthService implements IAuthService {
 
     @Override
     public String getCurrentUsername(UserDetails userDetails) {
-        return (userDetails != null) ? userDetails.getUsername() : "user name is not found!";
+        var methodName = "AuthService:getCurrentUser";
+        log.info(LoggingConstant.START_METHOD_LOG, methodName, userDetails.getUsername());
+        String data = (userDetails != null) ? userDetails.getUsername() : "user name is not found!";
+        log.info(LoggingConstant.END_METHOD_LOG, methodName);
+        return data;
     }
 }

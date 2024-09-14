@@ -47,14 +47,17 @@ public class AuthController {
         var methodName = "AuthController:getUserDetails";
         log.info(LoggingConstant.START_METHOD_LOG, methodName, userDetails.getUsername());
 
-        UserInfoResponse response = authService.getUserDeatils(userDetails);
+        UserInfoResponse response = authService.getUserDetails(userDetails);
 
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/username")
-    public ResponseEntity<String> currentUsername(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<String> getCurrentUsername(@AuthenticationPrincipal UserDetails userDetails) {
+        var methodName = "AuthController:getCurrentUsername ";
+        log.info(LoggingConstant.START_METHOD_LOG, methodName, userDetails.getUsername());
         String username = authService.getCurrentUsername(userDetails);
+        log.info(LoggingConstant.END_METHOD_LOG, methodName);
         return new ResponseEntity<>(username, HttpStatus.FOUND);
     }
 }

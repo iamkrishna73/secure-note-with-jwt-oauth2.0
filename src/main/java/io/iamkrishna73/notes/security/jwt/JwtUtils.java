@@ -22,12 +22,12 @@ public class JwtUtils {
     private String jwtSecret;
 
     @Value("${spring.app.jwtExpirationMs}")
-    private String jwtExpirationMs;
+    private int jwtExpirationMs;
 
     public String getJwtTokenFromHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         logger.debug("Authorization header {}: " , bearerToken);
-        if(bearerToken != null && bearerToken.startsWith("bearer ")) {
+        if(bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;

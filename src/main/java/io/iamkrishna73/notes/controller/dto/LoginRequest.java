@@ -1,6 +1,5 @@
 package io.iamkrishna73.notes.controller.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -11,7 +11,7 @@ public interface IAuthService {
 
     void signupUser(SignupRequest signupRequest);
 
-    UserInfoResponse getUserDeatils(UserDetails userDetails);
+    UserInfoResponse getUserDetails(UserDetails userDetails);
 
     String getCurrentUsername(UserDetails userDetails);
 }
